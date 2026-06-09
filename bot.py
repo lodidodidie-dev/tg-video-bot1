@@ -4,20 +4,23 @@ import tempfile
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 import yt_dlp
-
 import imageio_ffmpeg
-os.environ["PATH"] += os.pathsep + os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe())
+
+# Подключаем ffmpeg
+ffmpeg_path = os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe())
+os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ.get("PATH", "")
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-SUPPORTED = ["tiktok.com", "instagram.com", "youtube.com/shorts", "youtu.be"]
+SUPPORTED = ["tiktok.com", "instagram.com"]
 
 
 def _download(url):
     tmpdir = tempfile.mkdtemp()
     ydl_opts = {
-        "format": "best[ext=mp4]/best",
+        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best",
         "merge_output_format": "mp4",
         "outtmpl": f"{tmpdir}/%(id)s.%(ext)s",
+        "ffmpeg_location": ffmpeg_path,
         "quiet": True,
         "no_warnings": True,
     }
@@ -39,7 +42,7 @@ def _download(url):
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
     if not any(d in text for d in SUPPORTED):
-        await update.message.reply_text("Скинь ссылку из TikTok, Instagram или YouTube Shorts")
+        await update.message.reply_text("Скинь ссылку из TikTok или Instagram")
         return
     msg = await update.message.reply_text("Скачиваю...")
     filepath = await asyncio.to_thread(_download, text)
