@@ -15,7 +15,7 @@ SUPPORTED = ["tiktok.com", "instagram.com", "youtube.com/shorts", "youtu.be"]
 def _download(url):
     tmpdir = tempfile.mkdtemp()
     ydl_opts = {
-        "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+        "format": "best[ext=mp4]/best",
         "merge_output_format": "mp4",
         "outtmpl": f"{tmpdir}/%(id)s.%(ext)s",
         "quiet": True,
