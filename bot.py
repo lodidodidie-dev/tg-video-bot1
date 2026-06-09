@@ -5,6 +5,10 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 import yt_dlp
 
+import imageio_ffmpeg
+os.environ["PATH"] += os.pathsep + os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe())
+
+
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 SUPPORTED = ["tiktok.com", "instagram.com", "youtube.com/shorts", "youtu.be"]
 
